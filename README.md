@@ -23,7 +23,7 @@ python3 fetch_nasa_images.py --save_dir='./images/nasa_images/' --images_num=50
 python3 fetch_epic_images.py --save_dir='./images/epic_images/' --images_num=5
 python3 fetch_spacex_images.py --save_dir='./images/spacex_images/' --launch_id='5eb87d47ffd86e000604b38a'
 ```
-Здесь `launch_id` -- идентификатор одного из запусков, на котором успешно сделали фото. Бывает, что при запуске фото не делали;          
+`launch_id` -- идентификатор одного из запусков, на котором успешно сделали фото. Бывает, что при запуске фото не делали;          
 `save_dir` -- папка, будут сохраняться спарсенные изображения.
 
 
@@ -32,7 +32,7 @@ python3 fetch_spacex_images.py --save_dir='./images/spacex_images/' --launch_id=
 ```bash
 python3 nasa_photos_poster_bot.py './images/' --limit_mb=20.0
 ```
-Здесь обязательным аргументом выступает папка, откуда берутся фото для публикации. 
+Здесь обязательным аргументом выступает папка, откуда берутся фото для публикации.       
 `limit_mb` -- количество мегабайт, выше которого загрузка файла не осуществится (в связи с требованиями Telegram). Если фото превышает данную величину, то будет выбрано любое другое фото из папки `./images/` для публикации.
 
 
