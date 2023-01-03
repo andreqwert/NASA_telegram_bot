@@ -62,7 +62,7 @@ def main():
         if file_under_limit:
             image_to_send = InputMediaPhoto(media=open(random_image_path, 'rb'))
             time.sleep(publication_freq_seconds)
-            bot.send_media_group(chat_id=-1001643643093, media=[image_to_send])
+            bot.send_media_group(chat_id=telegram_chat_id, media=[image_to_send])
     
 
 if __name__ == '__main__':
