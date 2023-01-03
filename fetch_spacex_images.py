@@ -28,8 +28,8 @@ if __name__ == '__main__':
     parser.add_argument('--launch_id', help='ID запуска. Если не указан, то парсятся фото последнего пуска')
     args = parser.parse_args()
 
-    save_dir = args.save_dir   # './spacex_images/'
-    launch_id = args.launch_id   # '5eb87d47ffd86e000604b38a'
+    save_dir = args.save_dir
+    launch_id = args.launch_id
     
     os.makedirs(save_dir, exist_ok=True)    
     fetch_spacex_images(save_dir, launch_id)
