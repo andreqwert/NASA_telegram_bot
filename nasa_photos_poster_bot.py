@@ -11,7 +11,7 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description='Бот для постинга фото. Если явно фото не укзаано, то публикается случайное фото.')
     parser.add_argument('images_dir', help='Путь до папки с картинками, подлежащими публикации (в случае, если не указано определенное фото).')
-    parser.add_argument('--user_image_path', help='Путь до изображения для публикации.')
+    parser.add_argument('--user_image_path', help='Путь до изображения для публикации. Если флаг указан, то это из-е будет загружено первым.')
     parser.add_argument('--limit_mb', default=20.0, help='Лимит (в мб.) для изображения, подлежащего публикации')
     args = parser.parse_args()
     return args
