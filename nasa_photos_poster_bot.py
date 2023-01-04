@@ -9,8 +9,9 @@ import time
 
 def parse_args():
 
-    parser = argparse.ArgumentParser(description='Бот для постинга фото')
-    parser.add_argument('images_dir', help='Путь до папки с картинками, подлежащими публикации')
+    parser = argparse.ArgumentParser(description='Бот для постинга фото. Если явно фото не укзаано, то публикается случайное фото.')
+    parser.add_argument('images_dir', help='Путь до папки с картинками, подлежащими публикации (в случае, если не указано определенное фото).')
+    parser.add_argument('--user_image_path', help='Путь до изображения для публикации.')
     parser.add_argument('--limit_mb', default=20.0, help='Лимит (в мб.) для изображения, подлежащего публикации')
     args = parser.parse_args()
     return args
@@ -32,8 +33,9 @@ def get_random_image_path(dir_with_images):
 
 def check_file_under_limit(file_path, limit=20.0):
     """
-    Проверяем, действительно ли файл по указанному пути.
-    Если да, то занимает ли он больше limit мб."""
+    Проверяем, действительно ли существует файл по указанному пути.
+    Если да, то занимает ли он больше limit мб.
+    На выходе - булева переменная"""
 
     isfile = os.path.isfile(file_path)
     if isfile:
@@ -46,6 +48,7 @@ def check_file_under_limit(file_path, limit=20.0):
 def main():
 
     args = parse_args()
+    user_image_path = args.user_image_path
     images_dir = args.images_dir
     limit_mb = args.limit_mb
 
@@ -57,10 +60,15 @@ def main():
     bot = telegram.Bot(token=telegram_bot_token)
 
     while True:
-        random_image_path = get_random_image_path(images_dir)
-        file_under_limit = check_file_under_limit(random_image_path, limit_mb)
+        if user_image_path:
+            image_path = user_image_path
+            user_image_path = None   # опубликовали фото юзера -> больше фото юзера нет -> дальше публикуем рандомные
+        else:
+            image_path = get_random_image_path(images_dir)
+
+        file_under_limit = check_file_under_limit(image_path, limit_mb)
         if file_under_limit:
-            image_to_send = InputMediaPhoto(media=open(random_image_path, 'rb'))
+            image_to_send = InputMediaPhoto(media=open(image_path, 'rb'))
             time.sleep(publication_freq_seconds)
             bot.send_media_group(chat_id=telegram_chat_id, media=[image_to_send])
     
