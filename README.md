@@ -13,7 +13,7 @@
 pip3 install -r requirements.txt
 ```
 Поменяйте параметры в переменной окружения `.env`:
-- `API_TOKEN` -- токен к сайту NASA;
+- `API_NASA_SITE_TOKEN` -- токен к сайту NASA;
 - `TELEGRAM_BOT_TOKEN` -- токен к боту Telegram;
 - `TELEGRAM_CHAT_ID` -- ID чата, в котором требуется опубликовать фото;
 - `PUBLICATION_FREQ_SECONDS` -- с какой частотой будут публиковаться фото (в секундах). По умолчанию это 14400 секунд (т.е. 4 часа).
