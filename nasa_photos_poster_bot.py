@@ -54,6 +54,8 @@ def main():
     images_dir = args.images_dir
     limit_mb = args.limit_mb
 
+    assert len(os.listdir(images_dir)) > 0, 'Images directory is empty'
+
     env = Env()
     env.read_env()
     telegram_bot_token = env('TELEGRAM_BOT_TOKEN')
@@ -69,7 +71,6 @@ def main():
                 user_image_path = None   # опубликовали фото юзера -> больше фото юзера нет -> дальше публикуем рандомные
             else:
                 image_path = get_random_image_path(images_dir)
-
             file_under_limit = check_file_under_limit(image_path, limit_mb)
             if file_under_limit:
                 image_to_send = InputMediaPhoto(media=open(image_path, 'rb'))
