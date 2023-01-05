@@ -6,14 +6,14 @@ from pathlib import Path
 
 
 def fetch_spacex_images(images_dir, launch_id=None):
-
     
     last_launch_url = f'https://api.spacexdata.com/v5/launches/{launch_id}/'
-
     response = requests.get(last_launch_url)
     response.raise_for_status()
 
-    photo_links = response.json()['links'].get('flickr').get('original')
+    photo_links = response.json().get('links', {}).get('flickr', {}).get('original', {})
+    if not photo_links:
+        print('There are no any photo links')
     for num, url in enumerate(photo_links):
         ext = define_file_extenstion(url)
         path_to_save = os.path.join(images_dir, f'spacex{num}{ext}')

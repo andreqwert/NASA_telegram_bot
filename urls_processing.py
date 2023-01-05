@@ -27,5 +27,9 @@ def download_single_image(url, path_to_save):
         f.write(response.content)
 
 
+def filter_nans(lst):
+    return [elem for elem in lst if elem is not None]
+
+
 
 

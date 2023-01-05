@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-from urls_processing import download_single_image
+from urls_processing import download_single_image, filter_nans
 import os
 import argparse
 from environs import Env
@@ -10,6 +10,8 @@ from pathlib import Path
 def construct_download_link(im_desc, api_key):
 
     img_name = im_desc.get('image')
+    if not img_name:
+        return None
     img_datetime = datetime.fromisoformat(im_desc.get('date'))
     img_date = img_datetime.date()
     year, month, day = img_date.year, img_date.month, img_date.day
@@ -36,8 +38,11 @@ def fetch_epic_images(api_key, images_dir, images_num=5):
     response.raise_for_status()
     images_data = response.json()
 
-    photo_links = [construct_download_link(im_desc, api_key) for im_desc in images_data[:images_num]]
-    for num, url in enumerate(photo_links):
+    all_photo_links = [construct_download_link(im_desc, api_key) for im_desc in images_data[:images_num]]
+    valid_photo_links = filter_nans(all_photo_links)
+    if not valid_photo_links:
+        print('There are no any valid photo links')
+    for num, url in enumerate(valid_photo_links):
         path_to_save = os.path.join(images_dir, f'epic{num}.png')
         download_single_image(url, path_to_save)
 
