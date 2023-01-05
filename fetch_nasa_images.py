@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     env = Env()
     env.read_env()
-    api_key = env('API_TOKEN')
+    api_key = env('API_NASA_SITE_TOKEN')
 
     parser = argparse.ArgumentParser(description='Скачиваем фото Earth Polychromatic Imaging Camera (EPIC)')
     parser.add_argument('--save_dir', default=['images', 'nasa_images'], help='Путь для сохранения картинок')
