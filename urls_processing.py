@@ -2,6 +2,7 @@ import requests
 import os
 from os.path import splitext
 from urllib.parse import unquote, urlsplit
+import io
 
 
 def get_quotefree_url(url):
@@ -31,5 +32,5 @@ def filter_nans(lst):
     return [elem for elem in lst if elem is not None]
 
 
-
-
+def convert_to_mb(size_in_bytes):
+    return size_in_bytes / (1024 * 1024)

@@ -1,10 +1,12 @@
 import telegram
+import requests
 from telegram import InputMediaPhoto
 from environs import Env
 import random
 import os
 import argparse
 import time
+from urls_processing import convert_to_mb
 
 
 def parse_args():
@@ -39,7 +41,7 @@ def check_file_under_limit(file_path, limit=20.0):
 
     isfile = os.path.isfile(file_path)
     if isfile:
-        file_size_mb = os.stat(file_path).st_size / 1e6
+        file_size_mb = convert_to_mb(os.stat(file_path).st_size)
         return file_size_mb < float(limit)
     else:
         return False
@@ -57,20 +59,25 @@ def main():
     telegram_bot_token = env('TELEGRAM_BOT_TOKEN')
     telegram_chat_id = env('TELEGRAM_CHAT_ID')
     publication_freq_seconds = int(env('PUBLICATION_FREQ_SECONDS'))
+    retry_delay_seconds = int(env('TG_BOT_MSG_ERROR_SENDING_RETRY_DELAY_SECONDS'))
     bot = telegram.Bot(token=telegram_bot_token)
 
     while True:
-        if user_image_path:
-            image_path = user_image_path
-            user_image_path = None   # опубликовали фото юзера -> больше фото юзера нет -> дальше публикуем рандомные
-        else:
-            image_path = get_random_image_path(images_dir)
+        try:
+            if user_image_path:
+                image_path = user_image_path
+                user_image_path = None   # опубликовали фото юзера -> больше фото юзера нет -> дальше публикуем рандомные
+            else:
+                image_path = get_random_image_path(images_dir)
 
-        file_under_limit = check_file_under_limit(image_path, limit_mb)
-        if file_under_limit:
-            image_to_send = InputMediaPhoto(media=open(image_path, 'rb'))
-            time.sleep(publication_freq_seconds)
-            bot.send_media_group(chat_id=telegram_chat_id, media=[image_to_send])
+            file_under_limit = check_file_under_limit(image_path, limit_mb)
+            if file_under_limit:
+                image_to_send = InputMediaPhoto(media=open(image_path, 'rb'))
+                time.sleep(publication_freq_seconds)
+                bot.send_media_group(chat_id=178680093, media=[image_to_send])
+        except requests.exceptions.ConnectionError:
+            print(f"Received ConnectionError. Retrying in {retry_delay_seconds}")
+            telegram.error.RetryAfter(retry_delay_seconds)
     
 
 if __name__ == '__main__':
