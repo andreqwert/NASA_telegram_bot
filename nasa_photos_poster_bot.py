@@ -75,7 +75,7 @@ def main():
             if file_under_limit:
                 image_to_send = InputMediaPhoto(media=open(image_path, 'rb'))
                 time.sleep(publication_freq_seconds)
-                bot.send_media_group(chat_id=178680093, media=[image_to_send])
+                bot.send_media_group(chat_id=telegram_chat_id, media=[image_to_send])
         except requests.exceptions.ConnectionError:
             print(f"Received ConnectionError. Retrying in {retry_delay_seconds}")
             telegram.error.RetryAfter(retry_delay_seconds)
