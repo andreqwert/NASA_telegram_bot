@@ -2,7 +2,6 @@ import requests
 import os
 from os.path import splitext
 from urllib.parse import unquote, urlsplit
-import io
 
 
 def get_quotefree_url(url):
