@@ -2,3 +2,4 @@ python-telegram-bot==13.0
 pytz==2022.7
 requests==2.26.0
 urllib3==1.26.7
+environs==5.2.1
