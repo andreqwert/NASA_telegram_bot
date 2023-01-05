@@ -4,6 +4,7 @@ from urls_processing import download_single_image
 import os
 import argparse
 from environs import Env
+from pathlib import Path
 
 
 def construct_download_link(im_desc, api_key):
@@ -48,11 +49,11 @@ if __name__ == '__main__':
     api_key = env('API_TOKEN')
 
     parser = argparse.ArgumentParser(description='Скачиваем фото Earth Polychromatic Imaging Camera (EPIC)')
-    parser.add_argument('--save_dir', default='./images/epic_images/', help='Путь для сохранения картинок')
+    parser.add_argument('--save_dir', default=['images', 'epic_images'], help='Путь для сохранения картинок')
     parser.add_argument('--images_num', default=5, help='Сколько скачивать изображений')
     args = parser.parse_args()
 
-    save_dir = args.save_dir
+    save_dir = Path.cwd().joinpath(*args.save_dir)
     images_num = args.images_num
 
     os.makedirs(save_dir, exist_ok=True)
