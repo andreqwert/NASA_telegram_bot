@@ -8,11 +8,11 @@ from pathlib import Path
 
 def is_dirpath_valid(dir_path):
     """Check if path to directory exists and correct"""
-
+    
     if os.path.isdir(dir_path):
         return Path(dir_path)
     else:
-        raise argparse.ArgumentTypeError(f"{dir_path} <-- is not a valid path")
+        raise NotADirectoryError(dir_path)
 
 
 def get_quotefree_url(url):
