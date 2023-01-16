@@ -1,7 +1,6 @@
-from urls_processing import define_file_extenstion, download_single_image, filter_nans
+from data_processing import define_file_extenstion, download_single_image, filter_nans, is_dirpath_valid
 import requests
 import os
-from urllib.parse import urlencode
 import argparse
 from environs import Env
 from pathlib import Path
@@ -34,11 +33,11 @@ if __name__ == '__main__':
     api_key = env('API_NASA_SITE_TOKEN')
 
     parser = argparse.ArgumentParser(description='Скачиваем фото Earth Polychromatic Imaging Camera (EPIC)')
-    parser.add_argument('--save_dir', default=['images', 'nasa_images'], help='Путь для сохранения картинок')
+    parser.add_argument('--save_dir', default='images/nasa_images', type=is_dirpath_valid, help='Путь для сохранения картинок')
     parser.add_argument('--images_num', default=50, help='Сколько скачивать изображений')
     args = parser.parse_args()
 
-    save_dir = Path.cwd().joinpath(*args.save_dir)
+    save_dir = Path.cwd().joinpath(args.save_dir)
     images_num = args.images_num
 
     os.makedirs(save_dir, exist_ok=True)

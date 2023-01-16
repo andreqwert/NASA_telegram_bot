@@ -2,82 +2,50 @@ import telegram
 import requests
 from telegram import InputMediaPhoto
 from environs import Env
-import random
 import os
 import argparse
 import time
-from urls_processing import convert_to_mb
+from data_processing import convert_to_mb, get_random_image_path, check_file_under_limit
 
 
 def parse_args():
 
-    parser = argparse.ArgumentParser(description='Бот для постинга фото. Если явно фото не укзаано, то публикается случайное фото.')
-    parser.add_argument('images_dir', help='Путь до папки с картинками, подлежащими публикации (в случае, если не указано определенное фото).')
-    parser.add_argument('--user_image_path', help='Путь до изображения для публикации. Если флаг указан, то это из-е будет загружено первым.')
-    parser.add_argument('--limit_mb', default=20.0, help='Лимит (в мб.) для изображения, подлежащего публикации')
+    parser = argparse.ArgumentParser(description='Бот для постинга фото. Публикаются случайные фото из папки.')
+    parser.add_argument('--images_dir', default='./images/', help='Путь до папки с картинками, подлежащими публикации (в случае, если не указано определенное фото).')
+    parser.add_argument('--limit_mb', default=20.0, type=float, help='Лимит (в мб.) для изображения, подлежащего публикации')
+    parser.add_argument('--publication_freq_sec', default=5, type=int, help='Частота публикации в канале Telegram (в секундах)')
+    parser.add_argument('--retry_delay_seconds', default=5, type=int, help='Через сколько секунд будет произведен повторный запрос при потере соединения')
     args = parser.parse_args()
     return args
 
 
-def get_random_image_path(dir_with_images):
-    """
-    Получаем список файлов из папки dir_with_images и перемешиваем его.
-    На выход подаем первый файл из списка"""
-
-    image_paths = []
-    for root, dirs, files in os.walk(os.path.abspath(dir_with_images)):
-        for file in files:
-            if not file.startswith('.'):
-                image_paths.append(os.path.join(root, file))
-    random.shuffle(image_paths)
-    return image_paths[0]
-
-
-def check_file_under_limit(file_path, limit=20.0):
-    """
-    Проверяем, действительно ли существует файл по указанному пути.
-    Если да, то занимает ли он больше limit мб.
-    На выходе - булева переменная"""
-
-    isfile = os.path.isfile(file_path)
-    if isfile:
-        file_size_mb = convert_to_mb(os.stat(file_path).st_size)
-        return file_size_mb < float(limit)
-    else:
-        return False
-
-
 def main():
-
-    args = parse_args()
-    user_image_path = args.user_image_path
-    images_dir = args.images_dir
-    limit_mb = args.limit_mb
-
-    assert len(os.listdir(images_dir)) > 0, 'Images directory is empty'
 
     env = Env()
     env.read_env()
     telegram_bot_token = env('TELEGRAM_BOT_TOKEN')
     telegram_chat_id = env('TELEGRAM_CHAT_ID')
-    publication_freq_seconds = int(env('PUBLICATION_FREQ_SECONDS'))
-    retry_delay_seconds = int(env('TG_BOT_MSG_ERROR_SENDING_RETRY_DELAY_SECONDS'))
     bot = telegram.Bot(token=telegram_bot_token)
+
+    args = parse_args()
+    images_dir = args.images_dir
+    limit_mb = args.limit_mb
+    publication_freq_seconds = args.publication_freq_sec
+    retry_delay_seconds = args.retry_delay_seconds
+
+    assert len(os.listdir(images_dir)) > 0, 'Images directory is empty'
 
     while True:
         try:
-            if user_image_path:
-                image_path = user_image_path
-                user_image_path = None   # опубликовали фото юзера -> больше фото юзера нет -> дальше публикуем рандомные
-            else:
-                image_path = get_random_image_path(images_dir)
+            image_path = get_random_image_path(images_dir)
             file_under_limit = check_file_under_limit(image_path, limit_mb)
             if file_under_limit:
-                image_to_send = InputMediaPhoto(media=open(image_path, 'rb'))
+                with open(image_path, 'rb') as img:
+                    image_to_send = InputMediaPhoto(media=img)
                 time.sleep(publication_freq_seconds)
-                bot.send_media_group(chat_id=telegram_chat_id, media=[image_to_send])
-        except requests.exceptions.ConnectionError:
-            print(f"Received ConnectionError. Retrying in {retry_delay_seconds}")
+                bot.send_media_group(chat_id=178680093, media=[image_to_send])
+        except telegram.error.NetworkError:
+            print(f"Received ConnectionError. Retrying in {retry_delay_seconds} seconds...")
             telegram.error.RetryAfter(retry_delay_seconds)
     
 

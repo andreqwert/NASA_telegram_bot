@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-from urls_processing import download_single_image, filter_nans
+from data_processing import download_single_image, filter_nans, is_dirpath_valid
 import os
 import argparse
 from environs import Env
@@ -12,7 +12,7 @@ def construct_download_link(im_desc, api_key):
     img_name = im_desc.get('image')
     if not img_name:
         return None
-    img_datetime = datetime.fromisoformat(im_desc.get('date'))
+    img_datetime = datetime.fromisoformat(im_desc['date'])
     img_date = img_datetime.date()
     year, month, day = img_date.year, img_date.month, img_date.day
     date = '{}/{:02d}/{:02d}'.format(year, month, day)
@@ -54,11 +54,11 @@ if __name__ == '__main__':
     api_key = env('API_NASA_SITE_TOKEN')
 
     parser = argparse.ArgumentParser(description='Скачиваем фото Earth Polychromatic Imaging Camera (EPIC)')
-    parser.add_argument('--save_dir', default=['images', 'epic_images'], help='Путь для сохранения картинок')
+    parser.add_argument('--save_dir', default='images/epic_images', type=is_dirpath_valid, help='Путь для сохранения картинок')
     parser.add_argument('--images_num', default=5, help='Сколько скачивать изображений')
     args = parser.parse_args()
 
-    save_dir = Path.cwd().joinpath(*args.save_dir)
+    save_dir = Path.cwd().joinpath(args.save_dir)
     images_num = args.images_num
 
     os.makedirs(save_dir, exist_ok=True)
