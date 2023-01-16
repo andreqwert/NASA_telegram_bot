@@ -3,16 +3,6 @@ from os.path import splitext
 from urllib.parse import unquote, urlsplit
 import random
 import os
-from pathlib import Path
-
-
-def is_dirpath_valid(dir_path):
-    """Check if path to directory exists and correct"""
-    
-    if os.path.isdir(dir_path):
-        return Path(dir_path)
-    else:
-        raise NotADirectoryError(dir_path)
 
 
 def get_quotefree_url(url):
