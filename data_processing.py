@@ -61,7 +61,7 @@ def check_file_under_limit(file_path, limit=20.0):
         file_size_mb = convert_to_mb(os.stat(file_path).st_size)
         return file_size_mb < float(limit)
     else:
-        print(f'Recheck file path: {file_path}')
+        print(f'Recheck file path or file is invalid: {file_path}')
         return False
 
 
