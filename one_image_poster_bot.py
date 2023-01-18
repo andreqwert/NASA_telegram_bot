@@ -1,10 +1,8 @@
 import telegram
-import requests
-from telegram import InputMediaPhoto
 from environs import Env
 import argparse
-import time
-from data_processing import convert_to_mb, get_random_image_path, check_file_under_limit
+from data_processing import get_random_image_path
+from tg_functions import post_one_photo
 import os
 from pathlib import Path
 
@@ -40,11 +38,7 @@ def main():
         else:
             assert len(os.listdir(images_dir)) > 0, 'Images directory is empty'
             image_path = get_random_image_path(images_dir)
-        file_under_limit = check_file_under_limit(image_path, limit_mb)
-        if file_under_limit:
-            with open(image_path, 'rb') as img:
-                image_to_send = InputMediaPhoto(media=img)
-            bot.send_media_group(chat_id=telegram_chat_id, media=[image_to_send])
+        post_one_photo(bot, image_path, telegram_chat_id, limit_mb=limit_mb)
     except telegram.error.NetworkError:
         print(f"Received ConnectionError. Retrying in {retry_delay_seconds} seconds")
         telegram.error.RetryAfter(retry_delay_seconds)
