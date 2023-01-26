@@ -13,4 +13,3 @@ def post_one_photo(bot, image_path, telegram_chat_id, limit_mb=20.0, publication
             image_to_send = InputMediaPhoto(media=img)
         time.sleep(publication_freq_sec)
         bot.send_media_group(chat_id=telegram_chat_id, media=[image_to_send])
-    return None

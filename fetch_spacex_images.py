@@ -11,7 +11,7 @@ def fetch_spacex_images(images_dir, launch_id=None):
     response = requests.get(last_launch_url)
     response.raise_for_status()
 
-    photo_links = response.json().get('links', {})['flickr']['original']
+    photo_links = response.json()['links']['flickr']['original']
     if not photo_links:
         print('There are no any photo links')
     for num, url in enumerate(photo_links):

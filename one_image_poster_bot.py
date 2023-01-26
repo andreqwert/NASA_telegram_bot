@@ -32,16 +32,12 @@ def main():
     retry_delay_seconds = args.retry_delay_seconds
     images_dir = args.images_dir
     
-    try:
-        if user_image_path:
-            image_path = user_image_path
-        else:
-            assert len(os.listdir(images_dir)) > 0, 'Images directory is empty'
-            image_path = get_random_image_path(images_dir)
-        post_one_photo(bot, image_path, telegram_chat_id, limit_mb=limit_mb)
-    except telegram.error.NetworkError:
-        print(f"Received ConnectionError. Retrying in {retry_delay_seconds} seconds")
-        telegram.error.RetryAfter(retry_delay_seconds)
+    if user_image_path:
+        image_path = user_image_path
+    else:
+        assert len(os.listdir(images_dir)) > 0, 'Images directory is empty'
+        image_path = get_random_image_path(images_dir)
+    post_one_photo(bot, image_path, telegram_chat_id, limit_mb=limit_mb)
     
 
 if __name__ == '__main__':
