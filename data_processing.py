@@ -11,7 +11,7 @@ def get_quotefree_url(url):
     return urlsplit(unquote(url))._replace(fragment="", query="").geturl() 
 
 
-def define_file_extenstion(url):
+def define_file_extension(url):
     """Define from the url what extension the image has."""
 
     quotefree_url = get_quotefree_url(url)

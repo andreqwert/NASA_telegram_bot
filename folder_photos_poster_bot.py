@@ -9,7 +9,7 @@ from pathlib import Path
 
 def parse_args():
 
-    parser = argparse.ArgumentParser(description='Бот для постинга фото. Публикаются случайные фото из папки.')
+    parser = argparse.ArgumentParser(description='Бот для постинга фото. Публикуются случайные фото из папки.')
     parser.add_argument('--images_dir', default='./images/', type=Path, help='Путь до папки с картинками, подлежащими публикации (в случае, если не указано определенное фото).')
     parser.add_argument('--limit_mb', default=20.0, type=float, help='Лимит (в мб.) для изображения, подлежащего публикации')
     parser.add_argument('--publication_freq_sec', default=5, type=int, help='Частота публикации в канале Telegram (в секундах)')

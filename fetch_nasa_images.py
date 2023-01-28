@@ -1,4 +1,4 @@
-from data_processing import define_file_extenstion, download_single_image, filter_nans
+from data_processing import define_file_extension, download_single_image, filter_nans
 import requests
 import os
 import argparse
@@ -21,7 +21,7 @@ def fetch_nasa_images(api_key, images_dir, images_num=50):
     if not valid_links:
         print('There are no any valid links')
     for num, url in enumerate(valid_links):
-        ext = define_file_extenstion(url)
+        ext = define_file_extension(url)
         path_to_save = os.path.join(images_dir, f'nasa_apod_{num}{ext}')
         download_single_image(url, path_to_save)
 

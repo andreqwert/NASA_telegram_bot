@@ -1,4 +1,4 @@
-from data_processing import define_file_extenstion, download_single_image
+from data_processing import define_file_extension, download_single_image
 import requests
 import os
 import argparse
